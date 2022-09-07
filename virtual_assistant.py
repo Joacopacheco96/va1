@@ -4,6 +4,7 @@ import pywhatkit
 from datetime import datetime, date, timedelta
 import wikipedia
 from time import time
+from googlesearch.googlesearch import GoogleSearch
 
 start_time = time()
 engine = pyttsx3.init()
@@ -84,8 +85,12 @@ while True:
             info = wikipedia.summary(order, 1)
             speak(info)
 
-        # elif 'cuanto es' in rec:
-        #     speak(sm.getResult(rec))
+        # elif 'busca en internet' in rec:
+        #     response = GoogleSearch().search("batman")
+        #     print(response)
+            # for result in response.results:
+            #     print("Title: " + result.title)
+            #     print("Content: " + result.getText())
 
         elif 'descansa' in rec:
             speak("Okay Bye...")
