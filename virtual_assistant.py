@@ -17,8 +17,6 @@ voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id)
 engine.setProperty('rate', 178)
 engine.setProperty('volume', 0.7)
-day_es = [line.rstrip('\n') for line in open('src/day/day_es.txt')]
-day_en = [line.rstrip('\n') for line in open('src/day/day_en.txt')]
 
 def speak(text):
     engine.say(text)
@@ -67,7 +65,7 @@ while True:
         elif 'reproduce' in rec:        
                 music = rec.replace('reproduce', '')
                 speak(f'Sure, listen to {music}')
-                pywhatkit.playonyt(music)
+                pywhatkit.playonyt(music)                
 
 
         elif 'que' in rec:
