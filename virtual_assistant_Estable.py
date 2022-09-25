@@ -1,22 +1,27 @@
+from timeit import repeat
 import speech_recognition as sr
 import pyttsx3
 import pywhatkit
 from datetime import datetime, date, timedelta
 import wikipedia
 from time import time
-from googlesearch.googlesearch import GoogleSearch
+from googlesearch import search
 
 start_time = time()
 engine = pyttsx3.init()
 
 # name, key & config of Ai
-name = 'libro'
+name = 'thomas'
+name_es = 'tomas'
 key='AIzaSyBLE7mXeZcujKV6d_GBH2yR5re9S2NKRsU'
 attemts = 0
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id)
 engine.setProperty('rate', 178)
 engine.setProperty('volume', 0.7)
+
+initial_response = "yes sir ?"
+not_understand = "please, try again i don`t understand"
 
 def speak(text):
     engine.say(text)
@@ -26,11 +31,10 @@ def getDay():
     now = date.today().strftime("%A, %d de %B del %Y").lower()
     return now
 
-
 def get_audio():
     r = sr.Recognizer()
-    status = False
-
+    thomas_awake = False
+    
     with sr.Microphone() as source:
         print(f"({attemts}) Escuchando...")
         r.adjust_for_ambient_noise(source, duration=1)
@@ -40,25 +44,26 @@ def get_audio():
         try:
             rec = r.recognize_google(audio, language='es-ES').lower()
             
-            if name in rec:
+            if name or name_es in rec:
                 rec = rec.replace(f"{name} ", "").replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                status = True
-                speak(f'yes Sir')
-                print('yes Sir')
+                thomas_awake = True
+                speak(f'{initial_response}')
+                print(f'{initial_response}')
             else:
-                print(f"please, try again, i don`t understand: {rec}")
-                speak(f"please, try again, i don`t understand: {rec}")
+                print(f"{not_understand} {rec}")
+                speak(f"{not_understand}: {rec}")
+                return get_audio()
         except:
             pass
-    return {'text':rec, 'status':status}
+    return {'text':rec, 'thomas_awake':thomas_awake}
 
 while True:
     rec_json = get_audio()
-    # rec= ""
+    rec= ""
     rec = rec_json['text']
-    status = rec_json['status']
+    thomas_awake = rec_json['thomas_awake']
 
-    if status:
+    if thomas_awake:
         if 'estás ahí' in rec:
             speak('Of course')
 
@@ -91,9 +96,8 @@ while True:
             #     print("Content: " + result.getText())
 
         elif 'descansa' in rec:
-            speak("Okay Bye...")
+            speak("Okay call me whatever you want")
             break
-
         else:
             print(f"Vuelve a intentarlo 2, no reconozco: {rec}")
         
