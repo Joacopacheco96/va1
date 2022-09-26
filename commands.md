@@ -6,5 +6,6 @@ commands:
             hora
             dia
         busca informacion de (en wikipedia)
-        busca en internet (google)
+        busca en internet (URLS)
+        busca en google (websearch open)
         descansa

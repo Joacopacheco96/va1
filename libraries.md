@@ -4,4 +4,6 @@ pip install pyttsx3
 pip install wikipedia
 pip install googlesearch-python
 pip install PyAudio
-pip instalar chatterbot
+pip install chatterbot
+KIVY
+
