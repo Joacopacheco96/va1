@@ -6,7 +6,7 @@ from datetime import datetime, date
 import wikipedia
 from time import time
 from googlesearch import search
-from hello import hello
+from hello_trains import hello
 
 start_time = time()
 engine = pyttsx3.init()
@@ -80,7 +80,7 @@ def orders():
             rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")            
         
             if 'estas ahi' in rec:
-                speak('of course, what you need')
+                random_answer(hello)
                 return orders()
 
             elif 'reproduce' in rec:        
