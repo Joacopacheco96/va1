@@ -1,3 +1,5 @@
+from logging.config import listen
+import numbers
 import random
 import speech_recognition as sr
 import pyttsx3
@@ -8,6 +10,9 @@ from time import time
 from googlesearch import search
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.havetrouble import havetrouble
+from StringCalculator import SolveMathProblem
+from numbertoint import numbertoint as numbertoint
+
 
 start_time = time()
 engine = pyttsx3.init()
@@ -93,6 +98,16 @@ def orders():
                 elif 'dia es' in rec:                
                     speak(f"Hoy es {getDay()}")
                     return get_audio()
+            
+            elif 'calculadora' in rec:
+                speak('que operacion quieres hacer')
+                listen()
+                order = rec.replace('resultado', '')
+                numbers=order.split('+').split('-').split('*').split('/')
+                numberone=numbers[0].replace(' ','')
+                numbertwo=numbers[1].replace(' ','')
+                print(f'operacion es {order}')
+                speak(f'operacion es {order}')                
                 
             elif 'busca informacion de' in rec:
                 order = rec.replace('busca informacion de', '')
