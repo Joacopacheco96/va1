@@ -9,7 +9,7 @@ import wikipedia
 from time import time
 from googlesearch import search
 from db.trainedAnswers.hello import hello
-from db.trainedAnswers.havetrouble import havetrouble
+from db.trainedAnswers.haveTrouble import haveTrouble
 from StringCalculator import SolveMathProblem
 from numbertoint import numbertoint as numbertoint
 
@@ -161,7 +161,7 @@ def orders():
                 speak("Okay good bye sir")
                 break
             else:
-                speak(f"{random_answer(havetrouble)} {rec}")
+                speak(f"{random_answer(haveTrouble)} {rec}")
                 print(f"{rec}?")
                 return orders()
 
