@@ -1,4 +1,4 @@
-from logging.config import listen
+# libraries
 import numbers
 import random
 import speech_recognition as sr
@@ -8,11 +8,15 @@ from datetime import datetime, date
 import wikipedia
 from time import time
 from googlesearch import search
-from db.trainedAnswers.hello import hello
-from db.trainedAnswers.haveTrouble import haveTrouble
 from StringCalculator import SolveMathProblem
 from numbertoint import numbertoint as numbertoint
 
+#dbs
+from db.trainedAnswers.hello import hello
+from db.trainedAnswers.haveTrouble import haveTrouble
+
+#methods
+# from db.methods import reproduce
 
 start_time = time()
 engine = pyttsx3.init()
@@ -33,27 +37,26 @@ def getDay():
     now = date.today().strftime("%A, %d de %B del %Y").lower()
     return now
 
-# def listen(x):
-#         r = sr.Recognizer()        
-#         with sr.Microphone() as source:
-#             print(x)
-#             r.adjust_for_ambient_noise(source, duration=1)
-#             audio = r.listen(source)
-#             rec=" "
-#             rec = r.recognize_google(audio, language='es-ES').lower()
-#             rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")   
+def listen():
+        r = sr.Recognizer()        
+        with sr.Microphone() as source:
+            r.adjust_for_ambient_noise(source, duration=1)
+            audio = r.listen(source)
+            rec=""
+            rec = r.recognize_google(audio, language='es-ES').lower()
+            rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")   
 
 def random_answer(x):
     speak(random.choice(list(x.items()))[1])
 
-def get_audio():
+def init_waiting():
     attemts = 0
     while True:        
         r = sr.Recognizer()    
         with sr.Microphone() as source:
-            print(f"({attemts}) Escuchando...")
+            print(f"({attemts}) Waiting...")
             try:
-                r.adjust_for_ambient_noise(source, duration=0.5)
+                r.adjust_for_ambient_noise(source, duration=1)
                 audio = r.listen(source)
                 rec = ""
                 rec = r.recognize_google(audio, language='es-ES').lower()
@@ -63,8 +66,8 @@ def get_audio():
                     random_answer(hello)
                     return orders()
                 else:
-                    print(f"Necesaria activacion por su nombre")
-                    return get_audio()
+                    print(f"Activation by name")
+                    return init_waiting()
             except:pass
         attemts=attemts+1
 
@@ -73,31 +76,32 @@ def orders():
         r = sr.Recognizer()        
         with sr.Microphone() as source:
             print(f"Esperando orden...")
-            r.adjust_for_ambient_noise(source, duration=1)
+            r.adjust_for_ambient_noise(source)
             audio = r.listen(source)
             rec=" "
             rec = r.recognize_google(audio, language='es-ES').lower()
-            rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")            
+            rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")   
+            print(f"just listen: {rec}")         
         
             if 'estas ahi' in rec:
                 random_answer(hello)
                 return orders()
 
-            elif 'reproduce' in rec:        
-                    music = rec.replace('reproduce', '')
-                    speak(f'Sure, listen to {music}')
-                    pywhatkit.playonyt(music)  
-                    return get_audio()              
-
+            elif 'reproduce' in rec:
+                # reproduce()        
+                music = rec.replace('reproduce', '')
+                speak(f'Sure, listen to {music}')
+                pywhatkit.playonyt(music)  
+                return init_waiting()              
 
             elif 'que' in rec:
                 if 'hora' in rec:
                     hora = datetime.now().strftime('%I:%M %p')
                     speak(f"Son las {hora}")
-                    return get_audio()
+                    return init_waiting()
                 elif 'dia es' in rec:                
                     speak(f"Hoy es {getDay()}")
-                    return get_audio()
+                    return init_waiting()
             
             elif 'calculadora' in rec:
                 speak('que operacion quieres hacer')
@@ -116,7 +120,7 @@ def orders():
                 wikipedia.set_lang("es")
                 info = wikipedia.summary(order, 1)
                 speak(info)
-                return get_audio()
+                return init_waiting()
             
             elif 'busca en internet' in rec:
                 order= rec.replace('busca en internet','')
@@ -133,29 +137,9 @@ def orders():
                 pywhatkit.search(f'{order}')
                 print(order)
             
-            # elif 'whatsapp' in rec:
-            #     order= rec.replace('envia un whatsapp','')
-            #     speak(f'para quien es el mensaje?')
-            #     print(f'para quien es el mensaje?')
-            #     listen()
-            #     rec= rec.replace('0','')
-            #     number=(f'+598{rec}')
-            #     speak(f'que quieres decirle?')
-            #     print(f'que quieres decirle?')
-            #     listen()
-            #     speak(f'ok i text {rec}')
-            #     pywhatkit.whats.sendwhatmsg_instantly(
-            #         (f'{number}'),
-            #         (f'{rec}'),
-                    
-            #         30,
-            #         True,
-            #         35,
-            #     )                        
-
             elif 'descansa' in rec:
                 speak("Okay call me whatever you want")
-                return get_audio()
+                return init_waiting()
             
             elif 'finaliza procesos' in rec:
                 speak("Okay good bye sir")
@@ -165,5 +149,5 @@ def orders():
                 print(f"{rec}?")
                 return orders()
 
-get_audio()          
+init_waiting()          
 print(f" Ai shut down, time running: { int(time() - start_time) } seconds ")
