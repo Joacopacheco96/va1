@@ -1,30 +1,28 @@
-# libraries
-import numbers
 import random
 import speech_recognition as sr
 import pyttsx3
 import pywhatkit
 from datetime import datetime, date
-import wikipedia
 from time import time
-from googlesearch import search
-from StringCalculator import SolveMathProblem
-from numbertoint import numbertoint as numbertoint
+import os
+import openai
+import requests
 
 #dbs
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.haveTrouble import haveTrouble
-
-#methods
-# from db.methods import reproduce
+from db.trainedAnswers.listen import listen
 
 start_time = time()
 engine = pyttsx3.init()
 
 name = 'tomas'
-
+openai.organization = "org-Om0k9Kku79ZnUhQdFl8AVNLP"
+openai.api_key = "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"
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
+vozEsp = voices[3].id
+vozEng = voices[1].id
+engine.setProperty('voice', vozEng)
 engine.setProperty('rate', 135)
 engine.setProperty('volume', 1)
 
@@ -50,11 +48,13 @@ def random_answer(x):
     speak(random.choice(list(x.items()))[1])
 
 def init_waiting():
+    listenss = 1
     attemts = 0
     while True:        
         r = sr.Recognizer()    
         with sr.Microphone() as source:
-            print(f"({attemts}) Waiting...")
+            consola = f"({attemts}) Waiting..."
+            print(consola)
             try:
                 r.adjust_for_ambient_noise(source, duration=1)
                 audio = r.listen(source)
@@ -67,16 +67,19 @@ def init_waiting():
                     return orders()
                 else:
                     print(f"Activation by name")
-                    return init_waiting()
+                    listenss+=1
+                    if listenss % 3 == 0:
+                        random_answer(listen)
+                        print('need something sir?')
             except:pass
-        attemts=attemts+1
+        attemts+=1
 
 def orders():
     while True:
         r = sr.Recognizer()        
         with sr.Microphone() as source:
             print(f"Esperando orden...")
-            r.adjust_for_ambient_noise(source)
+            r.adjust_for_ambient_noise(source,duration=1)
             audio = r.listen(source)
             rec=" "
             rec = r.recognize_google(audio, language='es-ES').lower()
@@ -87,49 +90,21 @@ def orders():
                 random_answer(hello)
                 return orders()
 
-            elif 'reproduce' in rec:
-                # reproduce()        
+            elif 'reproduce' in rec or 'youtube' in rec:
                 music = rec.replace('reproduce', '')
+                music = rec.replace('youtube', '')
                 speak(f'Sure, listen to {music}')
                 pywhatkit.playonyt(music)  
                 return init_waiting()              
 
-            elif 'que' in rec:
+            elif 'que hora es' in rec or 'que dia es' in rec:
                 if 'hora' in rec:
                     hora = datetime.now().strftime('%I:%M %p')
                     speak(f"Son las {hora}")
                     return init_waiting()
-                elif 'dia es' in rec:                
+                elif 'dia' in rec:                
                     speak(f"Hoy es {getDay()}")
                     return init_waiting()
-            
-            elif 'calculadora' in rec:
-                speak('que operacion quieres hacer')
-                listen()
-                order = rec.replace('resultado', '')
-                numbers=order.split('+').split('-').split('*').split('/')
-                numberone=numbers[0].replace(' ','')
-                numbertwo=numbers[1].replace(' ','')
-                print(f'operacion es {order}')
-                speak(f'operacion es {order}')                
-                
-            elif 'busca informacion de' in rec:
-                order = rec.replace('busca informacion de', '')
-                speak(f"Ok, searching about {order}")
-                engine.setProperty('rate', 110)
-                wikipedia.set_lang("es")
-                info = wikipedia.summary(order, 1)
-                speak(info)
-                return init_waiting()
-            
-            elif 'busca en internet' in rec:
-                order= rec.replace('busca en internet','')
-                speak(f'okay there is the first results i found about {order}')
-                results = search(f"{order}",num_results = 5)
-                for result in results:
-                    result = result.replace('https','').replace('http','').replace('://','').replace('www.','')
-                    speak(result)
-                    print(result)
                     
             elif 'busca en google' in rec:
                 order= rec.replace('busca en google','')
@@ -137,17 +112,27 @@ def orders():
                 pywhatkit.search(f'{order}')
                 print(order)
             
-            elif 'descansa' in rec:
+            elif 'gracias' in rec or 'go rest' in rec or 'thanks' in rec or 'descanza' in rec:
                 speak("Okay call me whatever you want")
                 return init_waiting()
-            
-            elif 'finaliza procesos' in rec:
-                speak("Okay good bye sir")
-                break
-            else:
-                speak(f"{random_answer(haveTrouble)} {rec}")
-                print(f"{rec}?")
-                return orders()
 
+            else:
+                speak("Okay let me see what i found")
+                response = openai.Completion.create(
+                model="text-davinci-003",
+                prompt= rec,
+                max_tokens=256,
+                temperature=0.5,
+                )
+                resp =response.choices[0].text 
+                if resp:
+                    print(resp)
+                    speak(f"{resp}")
+                    speak("Anything else sir?")
+                else:
+                    speak(f"{random_answer(haveTrouble)} {rec}")
+                    speak("Anything else sir?")
+                    return orders()
+                  
 init_waiting()          
 print(f" Ai shut down, time running: { int(time() - start_time) } seconds ")
