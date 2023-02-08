@@ -11,7 +11,10 @@ import requests
 #dbs
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.haveTrouble import haveTrouble
-from db.trainedAnswers.listen import listen
+from db.trainedAnswers.thomaslisten import thomaslisten
+
+with open("contextconversation.txt","w") as initfile:
+    initfile.write(" ")
 
 start_time = time()
 engine = pyttsx3.init()
@@ -69,8 +72,8 @@ def init_waiting():
                     print(f"Activation by name")
                     listenss+=1
                     if listenss % 3 == 0:
-                        random_answer(listen)
                         print('need something sir?')
+                        random_answer(thomaslisten)
             except:pass
         attemts+=1
 
@@ -86,7 +89,7 @@ def orders():
             rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")   
             print(f"just listen: {rec}")         
         
-            if 'estas ahi' in rec:
+            if 'estas ahi' in rec or 'are you there' in rec:
                 random_answer(hello)
                 return orders()
 
@@ -97,7 +100,7 @@ def orders():
                 pywhatkit.playonyt(music)  
                 return init_waiting()              
 
-            elif 'que hora es' in rec or 'que dia es' in rec:
+            elif 'que hora es' in rec or 'que dia es' in rec or 'what hour' in rec or 'what day' in rec:
                 if 'hora' in rec:
                     hora = datetime.now().strftime('%I:%M %p')
                     speak(f"Son las {hora}")
@@ -106,7 +109,7 @@ def orders():
                     speak(f"Hoy es {getDay()}")
                     return init_waiting()
                     
-            elif 'busca en google' in rec:
+            elif 'busca en google' in rec or 'google' in rec:
                 order= rec.replace('busca en google','')
                 speak(f'okay this is what i found on google about {order}')
                 pywhatkit.search(f'{order}')
@@ -117,22 +120,28 @@ def orders():
                 return init_waiting()
 
             else:
-                speak("Okay let me see what i found")
-                response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt= rec,
-                max_tokens=256,
-                temperature=0.5,
-                )
-                resp =response.choices[0].text 
-                if resp:
-                    print(resp)
-                    speak(f"{resp}")
-                    speak("Anything else sir?")
-                else:
-                    speak(f"{random_answer(haveTrouble)} {rec}")
-                    speak("Anything else sir?")
-                    return orders()
+                with open("contextconversation.txt","a") as file:
+                    file.write(f" user question: {rec}.")
+                with  open('contextconversation.txt','r') as readfile:
+                    contxt=readfile.read()
+                    speak("Okay let me see what i found")
+                    response = openai.Completion.create(
+                    model="text-davinci-003",
+                    prompt= contxt,
+                    max_tokens=256,
+                    temperature=0.5,
+                    )
+                    resp =response.choices[0].text
+                    if resp:
+                        speak(f"{resp}")
+                        print(resp)
+                        with open("contextconversation.txt","a") as writefile:
+                            writefile.write(f" {resp}.")
+                            speak("Anything else sir?")
+                    else:
+                        speak(f"{random_answer(haveTrouble)} {rec}")
+                        speak("Anything else sir?")
+                        return orders()
                   
 init_waiting()          
 print(f" Ai shut down, time running: { int(time() - start_time) } seconds ")
