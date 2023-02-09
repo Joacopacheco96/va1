@@ -12,6 +12,7 @@ import requests
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.haveTrouble import haveTrouble
 from db.trainedAnswers.thomaslisten import thomaslisten
+from db.trainedAnswers.credentials import credentials
 
 with open("contextconversation.txt","w") as initfile:
     initfile.write(" ")
@@ -20,8 +21,8 @@ start_time = time()
 engine = pyttsx3.init()
 
 name = 'tomas'
-openai.organization = "org-Om0k9Kku79ZnUhQdFl8AVNLP"
-openai.api_key = "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"
+openai.organization = credentials['org']
+openai.api_key = credentials['key']
 voices = engine.getProperty('voices')
 vozEsp = voices[3].id
 vozEng = voices[1].id
