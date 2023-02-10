@@ -23,6 +23,7 @@ engine = pyttsx3.init()
 name = 'tomas'
 openai.organization = credentials['org']
 openai.api_key = credentials['key']
+
 voices = engine.getProperty('voices')
 vozEsp = voices[3].id
 vozEng = voices[1].id
