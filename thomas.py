@@ -23,6 +23,7 @@ engine = pyttsx3.init()
 name = 'tomas'
 openai.organization = credentials['org']
 openai.api_key = credentials['key']
+
 voices = engine.getProperty('voices')
 vozEsp = voices[3].id
 vozEng = voices[1].id
@@ -72,7 +73,7 @@ def init_waiting():
                 else:
                     print(f"Activation by name")
                     listenss+=1
-                    if listenss % 3 == 0:
+                    if listenss % 5 == 0:
                         print('need something sir?')
                         random_answer(thomaslisten)
             except:pass
@@ -137,12 +138,11 @@ def orders():
                         speak(f"{resp}")
                         print(resp)
                         with open("contextconversation.txt","a") as writefile:
-                            writefile.write(f" {resp}.")
+                            writefile.write(f"response: {resp}.")
                             speak("Anything else sir?")
                     else:
                         speak(f"{random_answer(haveTrouble)} {rec}")
                         speak("Anything else sir?")
                         return orders()
                   
-init_waiting()          
-print(f" Ai shut down, time running: { int(time() - start_time) } seconds ")
+init_waiting()
