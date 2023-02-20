@@ -8,6 +8,7 @@ import os
 import openai
 import requests
 
+
 #dbs
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.haveTrouble import haveTrouble
