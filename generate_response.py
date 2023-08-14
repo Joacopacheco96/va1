@@ -16,6 +16,7 @@ from db.trainedAnswers.thomaslisten import thomaslisten
 # from db.trainedAnswers.credentials import credentials
     
 def speak(text):
+    print(text)
     engine.say(text)
     engine.runAndWait()
 

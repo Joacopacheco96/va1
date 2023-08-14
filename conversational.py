@@ -7,17 +7,20 @@ def conversational(query) :
     url = 'https://www.botlibre.com/rest/json/chat'
     headers = {'Content-Type': 'application/json'}
     data = {
-        "application": "3752984275464243093",
+        "application": "6627987816708691542",
         "instance": "165",
         "message": query
     }
-
     response = requests.post(url, json=data, headers=headers)
+    print(response)
     response_text = response.text
     data_dict = json.loads(response_text)
+    if data_dict:
+        return(data_dict)
+    else:
+        return ' I cant find a solution for this at the moment'  
 
     # Print or use the response text as needed
-    return(data_dict)
 
 
 

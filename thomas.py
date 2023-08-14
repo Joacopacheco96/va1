@@ -16,7 +16,7 @@ from db.trainedAnswers.thomaslisten import thomaslisten
 # from db.trainedAnswers.credentials import credentials
 
 ###config parameters
-name = 'tomas'
+name = ['thomas','thom','tomas','tom']
 start_time = time()
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
@@ -26,19 +26,35 @@ engine.setProperty('rate', 135)
 engine.setProperty('volume', 1)
 
 def check_background():
+    check_background_jobs() 
     f = open('./Jobs/jobsPending.txt', 'r',encoding="utf-8")
     mytasks = f.readlines()
-    return mytasks
+    if mytasks:
+            speak("You have task pendings to read, Can I Show them now?")
+            rec = listen('Backgrond check response..')
+            if 'yes' in rec or 'sure' in rec:
+                for eachtask in mytasks:
+                    records=eachtask.split('*JobTitle*')
+                speak(records[0])
+                jobsRecords = (records[1]).split(',')
+                for job in jobsRecords:
+                    jobObj=job.split('=>')
+                    speak(jobObj[0])
+                deleteBackgroundTasks()
+            else:
+                speak('Okay i will remind you')
 
 def deleteBackgroundTasks():
     f = open('./Jobs/jobsPending.txt', 'w',encoding="utf-8")
     f.write('')
+    speak('Okay Now we are up to date by the moment')
 
 
 with open("contextconversation.txt","w") as initfile:
     initfile.write("as context in conversation: ")
 
 def speak(text):
+    print(text)
     engine.say(text)
     engine.runAndWait()
 
@@ -46,84 +62,50 @@ def random_answer(x):
     speak(random.choice(list(x.items()))[1])
 
 def listen(textToShow):
+    listen=0
     r = sr.Recognizer()        
     rec=""
-    with sr.Microphone() as source:
-        try:
-            print(f"{textToShow}")
-            r.adjust_for_ambient_noise(source,duration=1)
-            audio = r.listen(source)
-            rec = r.recognize_google(audio, language='en-EN').lower()
-            rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")   
-        except:pass
+    while len(rec) == 0:
+        listen+=1
+        print(f'{listen} {textToShow}')
+        with sr.Microphone() as source:
+            try:
+                r.adjust_for_ambient_noise(source,duration=1)
+                audio = r.listen(source)
+                rec = r.recognize_google(audio, language='en-EN').lower()
+                rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")   
+            except:pass
     return rec
 
-def init_waiting():
-    listenss = 1
-    attemts = 0
-    rec = ""
-    while not rec:
-        attemts+=1
-        # consola = f"({attemts}) Waiting..."
-        # print(consola)
-        rec = listen('Waiting..')
-    # while True:
-        if attemts % 20 == 0:
-            tasks_pending = check_background()
-            if tasks_pending:
-                speak("You have task pendings to read, Can I Show them now?")
-                rec = listen('Waiting..')
-                if 'yes' in rec or 'sure' in rec:
-                  for task in tasks_pending:
-                      tasksArr=task.split('***')
-                      for eachtask in tasksArr:
-                        records=eachtask.split('*JobTitle*')
-                        print(records[0])
-                        jobsRecords = records[1].split(',')
-                        for job in jobsRecords:
-                            jobObj=job.split('=>')
-                            print(jobObj[0])
-                  deleteBackgroundTasks()
-
-        # r = sr.Recognizer()    
-        # consola = f"({attemts}) Waiting..."
-        # print(consola)
-        # with sr.Microphone() as source:
-        #     try:
-        #         r.adjust_for_ambient_noise(source, duration=1)
-        #         audio = r.listen(source)
-        #         rec = ""
-        #         rec = r.recognize_google(audio, language='es-ES').lower()
-        #         rec = rec.replace(f"{name} ", "").replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-        if name in rec:
+def init_waiting():  
+        check_background()
+        
+        rec = ""
+        rec = listen('Init Waiting..')                    
+        if rec in name:
             random_answer(hello)
             return orders()
         else:
             print(f"Activation by name")
             listenss+=1
-            if listenss % 3 == 0:
+            if listenss % 5 == 0:
                 print(thomaslisten)
                 random_answer(thomaslisten)
-            # except:pass
-        # attemts+=1
+            # return init_waiting()
 
 def orders():
-    # while True:
     rec=''
-    while not rec:
-        rec = listen('Listen for order..')
-        # r = sr.Recognizer()        
-        # with sr.Microphone() as source:
-        #     print(f"Esperando orden...")
-        #     r.adjust_for_ambient_noise(source,duration=1)
-        #     audio = r.listen(source)
-        #     rec=" "
-        #     rec = r.recognize_google(audio, language='en-EN').lower()
-        #     rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")   
-            
+    rec = listen('Listen for order..')            
     print(f"just listen: {rec}")         
     responseGenerated = generate_response(rec)            
     speak(responseGenerated)
     print('resp generated: '+responseGenerated)
+    speak('Need anything else?')
+    rec = listen('Listen for order..')            
+    if 'yes' in rec or 'sure' in rec:
+      return orders()
+    else:
+        speak('Okay just call me by my name?')
+        return init_waiting()
                   
 init_waiting()
