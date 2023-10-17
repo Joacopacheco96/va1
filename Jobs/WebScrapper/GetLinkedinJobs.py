@@ -39,5 +39,5 @@ def CheckJobs(urltosearch):
         print('no new jobs found')
     return newjobs
 
-lastweek = "https://www.linkedin.com/jobs/search/?keywords=Developer&location=Uruguay&locationId=&geoId=100867946&f_TPR=r604800&position=1&pageNum=0"
+# lastweek = "https://www.linkedin.com/jobs/search/?keywords=Developer&location=Uruguay&locationId=&geoId=100867946&f_TPR=r604800&position=1&pageNum=0"
 # print(CheckJobs(lastweek))

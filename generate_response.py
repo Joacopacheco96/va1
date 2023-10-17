@@ -31,7 +31,7 @@ def random_answer(x):
     return (random.choice(list(x.items()))[1])
 
 def generate_response(rec):
-    response = 'Sorry'
+    response = 'Sorry can not found a response to that'
     with open("contextconversation.txt","a") as file:
         file.write((" user question: {} \n").format(rec))
 

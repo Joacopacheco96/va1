@@ -8,7 +8,9 @@ from time import time
 from conversational import conversational
 from generate_response import generate_response
 from Jobs.checkJobs import check_background_jobs
-
+from Thomasfunctions import open_url
+import webbrowser
+import validators
 #dbs
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.haveTrouble import haveTrouble
@@ -38,8 +40,11 @@ def check_background():
                 speak(records[0])
                 jobsRecords = (records[1]).split(',')
                 for job in jobsRecords:
-                    jobObj=job.split('=>')
+                    jobObj=job.split(' => ')
                     speak(jobObj[0])
+                    try:  
+                        webbrowser.open(jobObj[1].replace("'",""))
+                    except:pass
                 deleteBackgroundTasks()
             else:
                 speak('Okay i will remind you')
@@ -65,7 +70,7 @@ def listen(textToShow):
     listen=0
     r = sr.Recognizer()        
     rec=""
-    while len(rec) == 0:
+    while (len(rec) == 0 and listen < 10):
         listen+=1
         print(f'{listen} {textToShow}')
         with sr.Microphone() as source:
@@ -87,11 +92,11 @@ def init_waiting():
             return orders()
         else:
             print(f"Activation by name")
-            listenss+=1
-            if listenss % 5 == 0:
-                print(thomaslisten)
-                random_answer(thomaslisten)
-            # return init_waiting()
+            # listenss+=1
+            # if listenss % 5 == 0:
+            print(thomaslisten)
+            random_answer(thomaslisten)
+            return init_waiting()
 
 def orders():
     rec=''
