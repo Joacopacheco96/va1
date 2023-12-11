@@ -5,7 +5,8 @@ import pywhatkit
 from datetime import datetime, date
 from time import time
 import os
-from conversational import conversational
+from Integrations.conversational import conversational
+from Integrations.bardApi import bardapichat
 import requests
 name = 'tomas'
 
@@ -61,10 +62,11 @@ def generate_response(rec):
         response = "Okay call me whatever you want"
     else:
         speak("Okay")
-        resp = conversational(rec)
+        # resp = conversational(rec)
+        resp = bardapichat(rec)
         if resp:
-            print(resp['message'])
-            response = (f"{resp['message']}")
+            print(resp)
+            response = (f"{resp}")
         else:
             response = (f"{random_answer(haveTrouble)} {rec}")
             

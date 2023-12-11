@@ -5,7 +5,7 @@ import pywhatkit
 import os
 import datetime as dt
 from time import time
-from conversational import conversational
+# from conversational import conversational
 from generate_response import generate_response
 from Jobs.checkJobs import check_background_jobs
 from Thomasfunctions import open_url
@@ -70,7 +70,7 @@ def listen(textToShow):
     listen=0
     r = sr.Recognizer()        
     rec=""
-    while (len(rec) == 0 and listen < 10):
+    while (len(rec) == 0 and listen < 20):
         listen+=1
         print(f'{listen} {textToShow}')
         with sr.Microphone() as source:
@@ -92,9 +92,6 @@ def init_waiting():
             return orders()
         else:
             print(f"Activation by name")
-            # listenss+=1
-            # if listenss % 5 == 0:
-            print(thomaslisten)
             random_answer(thomaslisten)
             return init_waiting()
 
@@ -106,7 +103,7 @@ def orders():
     speak(responseGenerated)
     print('resp generated: '+responseGenerated)
     speak('Need anything else?')
-    rec = listen('Listen for order..')            
+    rec = listen('Need anything else?..')            
     if 'yes' in rec or 'sure' in rec:
       return orders()
     else:

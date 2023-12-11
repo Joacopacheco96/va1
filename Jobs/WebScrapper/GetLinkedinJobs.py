@@ -11,7 +11,7 @@ def CheckJobs(urltosearch):
     for line in mylist:
         oldArr=line.split('=>')
         if oldArr[1]:
-            oldObj = {oldArr[0] : oldArr[1]}
+            oldObj = {(oldArr[0])[:-1] : oldArr[1]}
             oldjobs = oldjobs | oldObj          
     try:
         reponse = requests.get(urltosearch)
@@ -26,8 +26,7 @@ def CheckJobs(urltosearch):
         url = job.find("a").get('href')
         keyJob = "{} on {}".format(thejob,company)
         newjob = "{} => {}\n".format(keyJob, url)
-        # print(newjob)
-        if keyJob not in oldjobs.keys():
+        if not (keyJob in oldjobs.keys()):
             with open("./Jobs/WebScrapper/jobs.txt","a",encoding="utf-8") as file:
                 if newjob:
                     file.write(f"{newjob}")
