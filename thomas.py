@@ -5,7 +5,6 @@ import pywhatkit
 import os
 import datetime as dt
 from time import time
-# from conversational import conversational
 from generate_response import generate_response
 from Jobs.checkJobs import check_background_jobs
 from Thomasfunctions import open_url
@@ -15,7 +14,6 @@ import validators
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.haveTrouble import haveTrouble
 from db.trainedAnswers.thomaslisten import thomaslisten
-# from db.trainedAnswers.credentials import credentials
 
 ###config parameters
 name = ['thomas','thom','tomas','tom']
@@ -55,7 +53,7 @@ def deleteBackgroundTasks():
     speak('Okay Now we are up to date by the moment')
 
 
-with open("contextconversation.txt","w") as initfile:
+with open("memory/contextconversation.txt","w") as initfile:
     initfile.write("as context in conversation: ")
 
 def speak(text):
@@ -64,7 +62,7 @@ def speak(text):
     engine.runAndWait()
 
 def random_answer(x):
-    speak(random.choice(list(x.items()))[1])
+    speak(random.choice(list(x)))
 
 def listen(textToShow):
     listen=0

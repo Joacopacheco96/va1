@@ -7,6 +7,7 @@ from time import time
 import os
 from Integrations.conversational import conversational
 from Integrations.bardApi import bardapichat
+from Integrations.asanaApi import getTasksByProject
 import requests
 name = 'tomas'
 
@@ -14,7 +15,6 @@ name = 'tomas'
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.haveTrouble import haveTrouble
 from db.trainedAnswers.thomaslisten import thomaslisten
-# from db.trainedAnswers.credentials import credentials
     
 def speak(text):
     print(text)
@@ -33,7 +33,7 @@ def random_answer(x):
 
 def generate_response(rec):
     response = 'Sorry can not found a response to that'
-    with open("contextconversation.txt","a") as file:
+    with open("memory/contextconversation.txt","a") as file:
         file.write((" user question: {} \n").format(rec))
 
     if 'estas ahi' in rec or 'are you there' in rec:
@@ -58,6 +58,13 @@ def generate_response(rec):
         googlesearch = pywhatkit.search(f'{order}')
         response=(f'okay showing what i found on google about {order}')
     
+    elif 'asana' in rec or 'check work items' in rec:
+        response = getTasksByProject('1203537349306106')
+        tasknames = []
+        for item in response:
+           tasknames.append(item['name']) if item['completed']==False else None
+        response=(f'Following tasks are pendings: {str(tasknames)}')        
+    
     elif 'gracias' in rec or 'go rest' in rec or 'thanks' in rec or 'thank you' in rec:
         response = "Okay call me whatever you want"
     else:
@@ -70,7 +77,7 @@ def generate_response(rec):
         else:
             response = (f"{random_answer(haveTrouble)} {rec}")
             
-    with open("contextconversation.txt","a") as writefile:
+    with open("memory/contextconversation.txt","a") as writefile:
         writefile.write((" response: {} \n").format(response))
     return response
     

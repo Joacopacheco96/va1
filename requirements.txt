@@ -4,3 +4,4 @@ pyttsx3
 PyAudio
 openai
 pip install -U google-generativeai
+pip install asana==3.2.2

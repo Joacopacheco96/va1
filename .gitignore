@@ -1,4 +1,9 @@
 db/trainedAnswers/credentials.py
 contextconversation.txt
 db/trainedAnswers/__pycache__/credentials.cpython-311.pyc
-Integrations/bardApi.py
+Integrations/credentials.py
+Integrations/__pycache__/credentials.cpython-311.pyc
+memory/something_to_say.txt
+Jobs/WebScrapper/jobs.txt
+Jobs/jobsPending.txt
+Jobs/WebScrapper/jobs.txt
