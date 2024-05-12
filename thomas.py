@@ -9,7 +9,6 @@ from generate_response import generate_response
 from Jobs.checkJobs import check_background_jobs
 from Thomasfunctions import open_url
 import webbrowser
-import validators
 #dbs
 from db.trainedAnswers.hello import hello
 from db.trainedAnswers.haveTrouble import haveTrouble
@@ -74,7 +73,7 @@ def listen(textToShow):
         with sr.Microphone() as source:
             try:
                 r.adjust_for_ambient_noise(source,duration=1)
-                audio = r.listen(source)
+                audio = r.listen(source,2)
                 rec = r.recognize_google(audio, language='en-EN').lower()
                 rec = rec.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")   
             except:pass
@@ -103,9 +102,10 @@ def orders():
     speak('Need anything else?')
     rec = listen('Need anything else?..')            
     if 'yes' in rec or 'sure' in rec:
-      return orders()
+        speak('tell me')
+        return orders()
     else:
-        speak('Okay just call me by my name?')
+        speak('Okay just call me by my name')
         return init_waiting()
                   
 init_waiting()

@@ -1,7 +1,8 @@
-pywhatkit
-SpeechRecognition
-pyttsx3
-PyAudio
-openai
+pip install pywhatkit
+pip install SpeechRecognition
+pip install pyttsx3
+pip install PyAudio
+//pip install openai
 pip install -U google-generativeai
 pip install asana==3.2.2
+pip install setuptools

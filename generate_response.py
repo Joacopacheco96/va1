@@ -72,7 +72,6 @@ def generate_response(rec):
         # resp = conversational(rec)
         resp = bardapichat(rec)
         if resp:
-            print(resp)
             response = (f"{resp}")
         else:
             response = (f"{random_answer(haveTrouble)} {rec}")
